@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties resource="jdbc.properties"></properties>
+	<typeAliases>
+		<!-- 别名好处:一旦User类的包名改了,只需改此1处即可 -->
+		<!-- <typeAlias type="com.aowin.news.dao.news.INewsDao" alias="INewsDao"/> -->
+		<typeAlias type="news.model.user.User" alias="User"/>
+		<typeAlias type="news.model.user.UserDTO" alias="UserDTO"/>
+		<typeAlias type="news.model.news.NewsDTO" alias="NewsDTO"/>
+		<typeAlias type="news.model.news.News" alias="News"/>
+	</typeAliases>
+	<environments default="develop">
+		<environment id="develop">
+			<transactionManager type="jdbc"></transactionManager>
+			<dataSource type="pooled">
+				<property name="driver" value="${jdbc.driver}"/>
+				<property name="url" value="${jdbc.url}"/>
+				<property name="username" value="${jdbc.username}"/>
+				<property name="password" value="${jdbc.password}"/>
+			</dataSource>
+		</environment>
+	</environments>
+	<!-- 引入所有的映射文件,针对每个crud都有各自匹配的mapper.xml文件 -->
+	<mappers>
+		<mapper resource="news/dao/LoginMapper.xml"/>
+		<mapper resource="news/dao/news/NewsMapper.xml"/>
+		<mapper resource="news/dao/user/UserMapper.xml"/>
+	</mappers>
+</configuration>
