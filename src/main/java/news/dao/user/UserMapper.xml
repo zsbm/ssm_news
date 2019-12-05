@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="news.dao.user.IUserDao">
+	<!-- <resultMap type="User" id="userMap">
+		
+	</resultMap> -->
+	
+	<select id="verifyId" resultType="_int">
+		select count(id) from user where id=#{id}
+	</select>
+	<select id="querynewsID" resultType="_int">
+		select count(id) from news where userid=#{id}
+	</select>
+	<insert id="addUser">
+		insert into user values(#{id},#{account},#{password},#{username},#{auth})
+	</insert>
+	<update id="updateUser">
+		update user set account=#{account},username=#{username},auth=#{auth} where id=#{id}
+	</update>
+	<delete id="deleteUserById">
+		delete from user where id=#{id}
+	</delete>
+	<!-- 分页查询和查总条数 -->
+	<select id="queryCounts" resultType="_int">
+		select count(id) from user
+	</select>
+	<select id="pageQuery" resultType="news.model.user.UserDTO">
+		select u.id,u.account,u.username,u.auth
+		from user u limit #{startIndex},#{pageSize}
+	</select>
+	<!-- 多条件查询 -->
+	<select id="queryUserByCondition" resultType="User">
+		select u.id,u.account,u.username,u.auth 
+		from user u
+		<where>
+			<if test="id!=null and id!=''">
+				and u.id like concat('%',#{id},'%')
+			</if>
+			<if test="account!=null and account!=''">
+				and u.account like concat('%',#{account},'%')
+			</if>
+			<if test="username!=null and username!=''">
+				and u.username like concat('%',#{username},'%')
+			</if>
+			<if test="auth!=null and auth!=''">
+				and u.auth = #{auth}
+			</if>
+		</where>
+	</select>
+	<!-- 多条件分页查询 -->
+	<select id="pageQueryByCondition" resultType="User">
+		select u.id,u.account,u.username,u.auth 
+		from user u
+		<where>
+			<if test="userQueryObject.id!=null and userQueryObject.id!=''">
+				and u.id like concat('%',#{userQueryObject.id},'%')
+			</if>
+			<if test="userQueryObject.account!=null and userQueryObject.account!=''">
+				and u.account like concat('%',#{userQueryObject.account},'%')
+			</if>
+			<if test="userQueryObject.username!=null and userQueryObject.username!=''">
+				and u.username like concat('%',#{userQueryObject.username},'%')
+			</if>
+			<if test="userQueryObject.auth!=null and userQueryObject.auth!=''">
+				and u.auth = #{userQueryObject.auth}
+			</if>
+		</where>
+		limit #{startIndex},#{pageSize} 
+	</select>
+	<!-- 多条件查总条数 -->
+	<select id="queryCountsByCondition" resultType="_int">
+		select count(*) from user u
+		<where>
+			<if test="id!=null and id!=''">
+				and u.id like concat('%',#{id},'%')
+			</if>
+			<if test="account!=null and account!=''">
+				and u.account like concat('%',#{account},'%')
+			</if>
+			<if test="username!=null and username!=''">
+				and u.username like concat('%',#{username},'%')
+			</if>
+			<if test="auth!=null and auth!=''">
+				and u.auth = #{auth}
+			</if>
+		</where>
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

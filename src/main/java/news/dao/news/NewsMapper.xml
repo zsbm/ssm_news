@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="news.dao.news.INewsDao">
+	<resultMap type="News" id="newsMap">
+		<id column="nid" property="id"/>
+		<id column="title" property="title"/>
+		<id column="content" property="content"/>
+		<id column="createDate" property="createDate"/>
+		<id column="type" property="type"/>
+		<association property="user" javaType="User">
+			<id column="id" property="id"/>
+			<result column="username" property="username"/>
+		</association>
+	</resultMap>
+
+	<insert id="addNews">
+		insert into news values(#{id},#{title},#{content},#{createDate},#{userId},#{type})
+	</insert>
+	<update id="updateNews">
+		update news set title=#{title},content=#{content},createDate=#{createDate},userId=#{userId},type=#{type} where id=#{id}
+	</update>
+	<delete id="deleteNewsById">
+		delete from news where id=#{id}
+	</delete>
+	<select id="verifyId" resultType="_int">
+		select count(id) from news where id=#{id}
+	</select>
+	<select id="queryTypeById" resultType="_int">
+		select type from news where id=#{id}
+	</select>
+	<select id="queryNewsList" resultType="news.model.news.NewsDTO">
+		select ns.id,ns.title,ns.content,ns.createDate, us.username from news ns,user us where ns.userId=us.id
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryCounts" resultType="_int">
+		select count(id) from news
+	</select>
+	<select id="pageQuery" resultType="news.model.news.NewsDTO">
+		select ns.id,ns.title,ns.content,ns.createDate, us.username from news ns,user us where ns.userId=us.id limit #{startIndex},#{pageSize}
+	</select>
+	<!-- 多条件查询 -->
+	<select id="queryNewsByCondition" resultMap="newsMap">
+		select n.id nid,n.title,n.content,n.createDate,n.type,u.id,u.username 
+		from news n,user u
+		where n.userId=u.id
+		<if test="id!=null and id!=''">
+			and n.id like concat('%',#{id},'%')
+		</if>
+		<if test="title!=null and title!=''">
+			and n.title like concat('%',#{title},'%')
+		</if>
+		<if test="type!=null and type!=''">
+			and n.type = #{type}
+		</if>
+	</select>
+	
+	<!-- 多条件分页查询 -->
+	<select id="pageQueryByCondition" resultMap="newsMap">
+		select n.id nid,n.title,n.content,n.createDate,n.type,u.id,u.username 
+		from news n,user u
+		where n.userId=u.id
+		<if test="newsQueryObject.id!=null and newsQueryObject.id!=''">
+			and n.id like concat('%',#{newsQueryObject.id},'%')
+		</if>
+		<if test="newsQueryObject.title!=null and newsQueryObject.title!=''">
+			and n.title like concat('%',#{newsQueryObject.title},'%')
+		</if>
+		<if test="newsQueryObject.type!=null and newsQueryObject.type!=''">
+			and n.type = #{newsQueryObject.type}
+		</if>
+		limit #{startIndex},#{pageSize} 
+	</select>
+	<!-- 多条件查总条数 -->
+	<select id="queryCountsByCondition" resultType="_int">
+		select count(id) from news n
+		<where>
+			<if test="id!=null and id!=''">
+				and n.id like concat('%',#{id},'%')
+			</if>
+			<if test="title!=null and title!=''">
+				and n.title like concat('%',#{title},'%')
+			</if>
+			<if test="type!=null and type!=''">
+				and n.type = #{type}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据新闻编号id查新闻记录 -->
+	<select id="queryNewsById" resultType="NewsDTO">
+		select ns.id,ns.title,ns.content,ns.createDate,ns.type,us.username from news ns,user us where ns.userId=us.id and ns.id=#{id}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
